@@ -431,6 +431,12 @@ NS_ASSUME_NONNULL_END
     
     for (ALTFeature feature in appID.features)
     {
+        if (!ALTFeatureIsLegacy(feature))
+        {
+            // Ignore non-legacy features.
+            continue;
+        }
+        
         parameters[feature] = appID.features[feature];
     }
     
@@ -443,7 +449,7 @@ NS_ASSUME_NONNULL_END
         }
         
         NSError *error = nil;
-        ALTAppID *appID = [self processResponse:responseDictionary parseHandler:^id _Nullable{
+        ALTAppID *updatedAppID = [self processResponse:responseDictionary parseHandler:^id _Nullable{
             NSDictionary *dictionary = responseDictionary[@"appId"];
             if (dictionary == nil)
             {
@@ -468,7 +474,124 @@ NS_ASSUME_NONNULL_END
             }
         } error:&error];
         
-        completionHandler(appID, error);
+        if (updatedAppID != nil)
+        {
+            [self enableModernFeaturesForAppID:appID team:team session:session completionHandler:^(BOOL success, NSError *error) {
+                if (success)
+                {
+                    completionHandler(updatedAppID, nil);
+                }
+                else
+                {
+                    completionHandler(nil, error);
+                }
+            }];
+        }
+        else
+        {
+            completionHandler(nil, error);
+        }
+    }];
+}
+
+- (void)enableModernFeaturesForAppID:(ALTAppID *)appID team:(ALTTeam *)team session:(ALTAppleAPISession *)session completionHandler:(void (^)(BOOL success, NSError *error))completionHandler
+{
+    // Heavily based on hugeBlack's implementation from https://github.com/hugeBlack/GetMoreRam
+    
+    NSMutableArray<NSDictionary *> *capabilities = [NSMutableArray array];
+    
+    for (ALTFeature feature in appID.features)
+    {
+        if (ALTFeatureIsLegacy(feature))
+        {
+            // Ignore legacy features.
+            continue;
+        }
+        
+        NSDictionary *dictionary = @{
+            @"type": @"bundleIdCapabilities",
+            @"attributes": @{
+                @"enabled": @YES,
+                @"settings": @[],
+            },
+            @"relationships": @{
+                @"capability": @{
+                    @"data": @{
+                        @"id": feature,
+                        @"type": @"capabilities"
+                    },
+                },
+            },
+        };
+        
+        [capabilities addObject:dictionary];
+    }
+    
+    if (capabilities.count == 0)
+    {
+        return completionHandler(YES, nil);
+    }
+    
+    NSDictionary<NSString *, id> *attributes = @{
+        @"name": appID.name,
+        @"identifier": appID.bundleIdentifier,
+        @"teamId": team.identifier,
+        @"seedId": team.identifier,
+        @"bundleType": @"bundle",
+        @"hasExclusiveManagedCapabilities": @NO,
+    };
+    
+    NSDictionary<NSString *, id> *relationships = @{
+        @"bundleIdCapabilities": @{
+            @"data": capabilities,
+        },
+    };
+    
+    NSDictionary<NSString *, id> *body = @{
+        @"data" : @{
+            @"id": appID.identifier,
+            @"type": @"bundleIds",
+            @"attributes": attributes,
+            @"relationships": relationships
+        },
+    };
+    
+    NSError *serializationError = nil;
+    NSData *bodyData = [NSJSONSerialization dataWithJSONObject:body options:NSJSONWritingSortedKeys error:&serializationError];
+    if (bodyData == nil)
+    {
+        NSError *error = [NSError errorWithDomain:ALTAppleAPIErrorDomain code:ALTAppleAPIErrorInvalidParameters userInfo:@{NSUnderlyingErrorKey: serializationError}];
+        completionHandler(nil, error);
+        return;
+    }
+    
+    NSURL *requestURL = [NSURL URLWithString:[NSString stringWithFormat:@"bundleIds/%@", appID.identifier] relativeToURL:self.servicesBaseURL];
+        
+    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:requestURL];
+    request.HTTPMethod = @"PATCH";
+    request.HTTPBody = bodyData;
+    
+    [self sendFeatureServicesRequest:request session:session team:team completionHandler:^(NSDictionary *responseDictionary, NSError *requestError) {
+        if (responseDictionary == nil)
+        {
+            completionHandler(NO, requestError);
+            return;
+        }
+        
+        NSError *error = nil;
+        id result = [self processResponse:responseDictionary parseHandler:^id _Nullable{
+            return responseDictionary[@"data"];
+        } resultCodeHandler:^NSError * _Nullable(NSInteger resultCode) {
+            switch (resultCode)
+            {
+                case 409:
+                    return [NSError errorWithDomain:ALTAppleAPIErrorDomain code:ALTAppleAPIErrorInvalidCapability userInfo:nil];
+                    
+                default: return nil;
+            }
+        } error:&error];
+        
+        completionHandler(result != nil, error);
     }];
 }
 
@@ -811,7 +934,7 @@ NS_ASSUME_NONNULL_END
         completionHandler(nil, error);
         return;
     }
-        
+    
     request.HTTPBody = bodyData;
     
     NSString *HTTPMethodOverride = request.HTTPMethod;
@@ -874,6 +997,66 @@ NS_ASSUME_NONNULL_END
     [dataTask resume];
 }
 
+- (void)sendFeatureServicesRequest:(NSURLRequest *)originalRequest session:(ALTAppleAPISession *)session team:(ALTTeam *)team completionHandler:(void (^)(NSDictionary *responseDictionary, NSError *error))completionHandler
+{
+    NSMutableURLRequest *request = [originalRequest mutableCopy];
+    
+    NSDictionary<NSString *, NSString *> *httpHeaders = @{
+        @"Content-Type": @"application/vnd.api+json",
+        @"User-Agent": @"Xcode",
+        @"Accept": @"application/vnd.api+json",
+        @"Accept-Language": @"en-us",
+        @"X-Apple-App-Info": @"com.apple.gs.xcode.auth",
+        @"X-Xcode-Version": @"11.2 (11B41)",
+        @"X-Apple-I-Identity-Id": session.dsid,
+        @"X-Apple-GS-Token": session.authToken,
+        @"X-Apple-I-MD-M": session.anisetteData.machineID,
+        @"X-Apple-I-MD": session.anisetteData.oneTimePassword,
+        @"X-Apple-I-MD-LU": session.anisetteData.localUserID,
+        @"X-Apple-I-MD-RINFO": [@(session.anisetteData.routingInfo) description],
+        @"X-Mme-Device-Id": session.anisetteData.deviceUniqueIdentifier,
+        @"X-MMe-Client-Info": session.anisetteData.deviceDescription,
+        @"X-Apple-I-Client-Time": [self.dateFormatter stringFromDate:session.anisetteData.date],
+        @"X-Apple-Locale": session.anisetteData.locale.localeIdentifier,
+        @"X-Apple-I-TimeZone": session.anisetteData.timeZone.abbreviation
+    };
+    
+    [httpHeaders enumerateKeysAndObjectsUsingBlock:^(NSString *key, NSString *value, BOOL *stop) {
+        [request setValue:value forHTTPHeaderField:key];
+    }];
+    
+    NSURLSessionDataTask *dataTask = [self.session dataTaskWithRequest:request completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error) {
+        if (data == nil)
+        {
+            completionHandler(nil, error);
+            return;
+        }
+        
+        NSDictionary *responseDictionary = nil;
+        
+        if (data.length == 0)
+        {
+            responseDictionary = @{};
+        }
+        else
+        {
+            NSError *parseError = nil;
+            responseDictionary = [NSJSONSerialization JSONObjectWithData:data options:0 error:&parseError];
+            
+            if (responseDictionary == nil)
+            {
+                NSError *error = [NSError errorWithDomain:NSURLErrorDomain code:NSURLErrorBadServerResponse userInfo:@{NSUnderlyingErrorKey: parseError}];
+                completionHandler(nil, error);
+                return;
+            }
+        }
+        
+        completionHandler(responseDictionary, nil);
+    }];
+    
+    [dataTask resume];
+}
+
 - (nullable id)processResponse:(NSDictionary *)responseDictionary
                          parseHandler:(id _Nullable (^_Nullable)(void))parseHandler
                     resultCodeHandler:(NSError *_Nullable (^_Nullable)(NSInteger resultCode))resultCodeHandler
@@ -888,7 +1071,9 @@ NS_ASSUME_NONNULL_END
         }
     }
     
-    id result = responseDictionary[@"resultCode"];
+    NSDictionary *errorDictionary = [responseDictionary[@"errors"] firstObject];
+    
+    id result = responseDictionary[@"resultCode"] ?: errorDictionary[@"status"];
     if (result == nil)
     {
         *error = [NSError errorWithDomain:NSURLErrorDomain code:NSURLErrorBadServerResponse userInfo:nil];
@@ -910,7 +1095,7 @@ NS_ASSUME_NONNULL_END
         
         if (tempError == nil)
         {
-            NSString *errorDescription = [responseDictionary objectForKey:@"userString"] ?: [responseDictionary objectForKey:@"resultString"];
+            NSString *errorDescription = [responseDictionary objectForKey:@"userString"] ?: [responseDictionary objectForKey:@"resultString"] ?: [errorDictionary objectForKey:@"title"] ?: [errorDictionary objectForKey:@"detail"];
             NSString *localizedDescription = [NSString stringWithFormat:@"%@ (%@)", errorDescription, @(resultCode)];
             
             tempError = [NSError errorWithDomain:ALTUnderlyingAppleAPIErrorDomain code:resultCode userInfo:@{

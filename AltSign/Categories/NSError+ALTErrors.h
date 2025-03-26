@@ -58,6 +58,8 @@ typedef NS_ERROR_ENUM(ALTAppleAPIErrorDomain, ALTAppleAPIError)
     ALTAppleAPIErrorAuthenticationHandshakeFailed = 3020,
     
     ALTAppleAPIErrorInvalidAnisetteData = 3021,
+    
+    ALTAppleAPIErrorInvalidCapability = 3050
 };
 
 NS_ASSUME_NONNULL_BEGIN

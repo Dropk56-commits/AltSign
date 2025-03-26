@@ -192,6 +192,9 @@ NSErrorUserInfoKey const ALTAppNameErrorKey = @"appName";
             
         case ALTAppleAPIErrorInvalidAnisetteData:
             return NSLocalizedString(@"The provided anisette data is invalid.", @"");
+            
+        case ALTAppleAPIErrorInvalidCapability:
+            return NSLocalizedString(@"The requested App ID capability is invalid.", @"");
     }
     
     return nil;
