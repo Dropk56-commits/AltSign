@@ -316,7 +316,7 @@ NS_ASSUME_NONNULL_END
         } resultCodeHandler:^NSError * _Nullable(NSInteger resultCode) {
             switch (resultCode)
             {
-                case 7252: return nil;
+                case 7252:
                     return [NSError errorWithDomain:ALTAppleAPIErrorDomain code:ALTAppleAPIErrorCertificateDoesNotExist userInfo:nil];
                     
                 default: return nil;
