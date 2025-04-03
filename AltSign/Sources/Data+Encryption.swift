@@ -7,7 +7,7 @@
 //
 
 import Foundation
-import CoreCrypto
+import AltCrypto
 
 extension Data
 {

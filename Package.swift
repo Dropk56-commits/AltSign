@@ -14,11 +14,11 @@ let package = Package(
         .library(
             name: "AltSign-Dynamic",
             type: .dynamic,
-            targets: ["AltSign", "CAltSign", "CoreCrypto", "CCoreCrypto", "ldid", "ldid-core", "OpenSSL"]
+            targets: ["AltSign", "CAltSign", "AltCrypto", "CAltCrypto", "ldid", "ldid-core", "OpenSSL"]
         ),
         .library(
             name: "AltSign-Static",
-            targets: ["AltSign", "CAltSign", "CoreCrypto", "CCoreCrypto", "ldid", "ldid-core"]
+            targets: ["AltSign", "CAltSign", "AltCrypto", "CAltCrypto", "ldid", "ldid-core"]
         ),
     ],
     dependencies: [],
@@ -108,8 +108,8 @@ let package = Package(
         ),
         
         .target(
-            name: "CCoreCrypto",
-            path: "Dependencies/corecrypto",
+            name: "CAltCrypto",
+            path: "Dependencies/altcrypto",
             exclude: [
                 "Sources/CoreCryptoMacros.swift"
             ],
@@ -119,9 +119,9 @@ let package = Package(
             ]
         ),
         .target(
-            name: "CoreCrypto",
-            dependencies: ["CCoreCrypto"],
-            path: "Dependencies/corecrypto/Sources",
+            name: "AltCrypto",
+            dependencies: ["CAltCrypto"],
+            path: "Dependencies/altcrypto/Sources",
             exclude: [
                 "ccsrp.m"
             ],
@@ -135,14 +135,14 @@ let package = Package(
 
         .target(
             name: "CAltSign",
-            dependencies: ["CoreCrypto", "ldid"],
+            dependencies: ["AltCrypto", "ldid"],
             path: "",
             exclude: [
                 "AltSign/ldid/alt_ldid.cpp",
                 "AltSign/ldid/alt_ldid.hpp",
                 "AltSign/Sources",
                 "AltSign/include/module.modulemap",
-                "Dependencies/corecrypto",
+                "Dependencies/altcrypto",
                 "Dependencies/ldid",
                 "Dependencies/OpenSSL",
                 "Dependencies/minizip/iowin32.c",
