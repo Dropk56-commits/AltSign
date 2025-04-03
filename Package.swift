@@ -143,6 +143,7 @@ let package = Package(
                 "AltSign/Sources",
                 "AltSign/include/module.modulemap",
                 "Dependencies/altcrypto",
+                "Dependencies/corecrypto",
                 "Dependencies/ldid",
                 "Dependencies/OpenSSL",
                 "Dependencies/minizip/iowin32.c",

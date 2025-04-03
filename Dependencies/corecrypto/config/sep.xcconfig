@@ -1,0 +1,43 @@
+// Copyright (c) (2019,2021,2023,2024) Apple Inc. All rights reserved.
+//
+// corecrypto is licensed under Apple Inc.’s Internal Use License Agreement (which
+// is contained in the License.txt file distributed with corecrypto) and only to
+// people who accept that license. IMPORTANT:  Any license rights granted to you by
+// Apple Inc. (if any) are limited to internal use within your organization only on
+// devices and computers you own or control, for the sole purpose of verifying the
+// security characteristics and correct functioning of the Apple Software.  You may
+// not, directly or indirectly, redistribute the Apple Software or any portions thereof.
+
+// Use xcconfig file exported by AppleSEPOS into the SDK
+#include "<DEVELOPER_DIR>/AppleInternal/XcodeConfig/SEP.xcconfig"
+
+PRODUCT_NAME_corecrypto_l4_norm = corecrypto_l4
+PRODUCT_NAME = $(PRODUCT_NAME_$(TARGET_NAME):default=$(TARGET_NAME))
+
+BUILD_VARIANTS = normal factory debug asan cctest provisioning
+
+BUILD_CONFIG_ = RELEASE
+BUILD_CONFIG_normal = RELEASE
+BUILD_CONFIG = $(BUILD_CONFIG_$(CURRENT_VARIANT):default=$(CURRENT_VARIANT:upper))
+
+PUBLIC_HEADERS_FOLDER_PATH = $(SEPRT_HEADER_INSTALL_PATH)/corecrypto
+PRIVATE_HEADERS_FOLDER_PATH = $(SEPRT_HEADER_INSTALL_PATH)/corecrypto
+
+INSTALL_PATH = $(SEP_LIBRARY_INSTALL_PATH)
+
+GCC_C_LANGUAGE_STANDARD = gnu11
+
+GCC_PREPROCESSOR_DEFINITIONS_factory = CORECRYPTO_POST_TRACE
+GCC_PREPROCESSOR_DEFINITIONS_debug = CORECRYPTO_POST_TRACE
+GCC_PREPROCESSOR_DEFINITIONS_cctest = CORECRYPTO_POST_TRACE
+GCC_PREPROCESSOR_DEFINITIONS_norm_post = CORECRYPTO_POST_TRACE
+GCC_PREPROCESSOR_DEFINITIONS_post = CORECRYPTO_POST_TRACE
+GCC_PREPROCESSOR_DEFINITIONS = $(inherited) $(GCC_PREPROCESSOR_DEFINITIONS_$(CURRENT_VARIANT))
+GCC_PREPROCESSOR_DEFINITIONS = USE_L4 $(inherited)
+
+OTHER_CFLAGS = $(SEP_OTHER_CFLAGS)
+OTHER_CFLAGS = $(inherited) --system-header-prefix=$(SEPBASE)
+OTHER_CFLAGS = $(inherited) -DRELAXED_FORTIFY_SOURCE=1
+OTHER_CFLAGS = $(inherited) $(TRUSTED_EXEC_CFLAGS)
+
+DEFINES_MODULE = YES
