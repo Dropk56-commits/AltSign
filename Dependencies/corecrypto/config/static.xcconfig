@@ -20,7 +20,7 @@ BUILD_VARIANTS[sdk=driverkit*] = normal
 // SDK_INSTALL_ROOT is related to DriverKit
 INSTALL_PATH = $(SDK_INSTALL_ROOT)/usr/local/lib
 
-SKIP_INSTALL[sdk=driverkit*] = YES
+SKIP_INSTALL = YES
 
 STRIP_STYLE = debugging
 
