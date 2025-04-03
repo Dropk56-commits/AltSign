@@ -67,9 +67,12 @@
 
 #include <corecrypto/ccdigest.h>
 
+// Intentionally not defining function-like macro.
+#define ccsha256_di alt_ccsha256_di
+
 /* sha2 selectors */
 const struct ccdigest_info *ccsha224_di(void);
-const struct ccdigest_info *ccsha256_di(void);
+const struct ccdigest_info *alt_ccsha256_di(void);
 const struct ccdigest_info *ccsha384_di(void);
 const struct ccdigest_info *ccsha512_di(void);
 

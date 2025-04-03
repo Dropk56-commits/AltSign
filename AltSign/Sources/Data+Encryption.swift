@@ -26,7 +26,7 @@ extension Data
     
     func decryptedCBC(context gsaContext: GSAContext) -> Data?
     {
-        guard let mode = ccaes_cbc_decrypt_mode() else { return nil }
+        guard let mode = alt_ccaes_cbc_decrypt_mode() else { return nil }
         
         let context = Data.makeBuffer(size: mode.pointee.size, type: cccbc_ctx.self)
         defer { context.deallocate() }
@@ -41,7 +41,7 @@ extension Data
             self.withUnsafeBytes { (dataBytes) in
                 initializationVector.withUnsafeMutableBytes { (ivBytes) -> size_t in
                     let ivPointer = ivBytes.baseAddress!.assumingMemoryBound(to: cccbc_iv.self)
-                    return ccpad_pkcs7_decrypt(mode, context, ivPointer, self.count, dataBytes.baseAddress, decryptedBytes.baseAddress)
+                    return alt_ccpad_pkcs7_decrypt(mode, context, ivPointer, self.count, dataBytes.baseAddress, decryptedBytes.baseAddress)
                 }
             }
         }
@@ -52,7 +52,7 @@ extension Data
     
     func decryptedGCM(context gsaContext: GSAContext) -> Data?
     {
-        guard let mode = ccaes_gcm_decrypt_mode(),
+        guard let mode = alt_ccaes_gcm_decrypt_mode(),
               let sessionKey = gsaContext.sessionKey else { return nil }
         
         let context = Data.makeBuffer(size: mode.pointee.size, type: ccgcm_ctx.self)

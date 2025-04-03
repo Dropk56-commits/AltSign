@@ -14,9 +14,9 @@
 #include <corecrypto/cc_priv.h>
 #include "ccpad_internal.h"
 
-size_t ccpad_pkcs7_decrypt(const struct ccmode_cbc *cbc, cccbc_ctx *cbc_key,
-                           cccbc_iv *iv,
-                           size_t nbytes, const void *in, void *out) {
+size_t alt_ccpad_pkcs7_decrypt(const struct ccmode_cbc *cbc, cccbc_ctx *cbc_key,
+                               cccbc_iv *iv,
+                               size_t nbytes, const void *in, void *out) {
     CC_ENSURE_DIT_ENABLED_WITH_SB
 
     const size_t block_size = cbc->block_size;

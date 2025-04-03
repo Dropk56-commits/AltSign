@@ -497,7 +497,7 @@ BOOL CALLBACK ccrng_cryptographic_init_once_win(PINIT_ONCE InitOnce, PVOID Param
 }
 #endif
 
-struct ccrng_state *ccrng(int *error)
+struct ccrng_state *alt_ccrng(int *error)
 {
     CC_INIT_ONCE(ccrng_cryptographic_init_once);
 

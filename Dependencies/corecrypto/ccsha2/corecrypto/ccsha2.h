@@ -14,12 +14,15 @@
 
 #include <corecrypto/ccdigest.h>
 
+// Intentionally not defining function-like macro.
+#define ccsha256_di alt_ccsha256_di
+
 CC_PTRCHECK_CAPABLE_HEADER()
 CC_BEGIN_DECLS
 
 /* sha2 selectors */
 const struct ccdigest_info *ccsha224_di(void);
-const struct ccdigest_info *ccsha256_di(void);
+const struct ccdigest_info *alt_ccsha256_di(void);
 const struct ccdigest_info *ccsha384_di(void);
 const struct ccdigest_info *ccsha512_di(void);
 const struct ccdigest_info *ccsha512_256_di(void);  // SHA512/256 (cf FIPS 180-4 https://nvlpubs.nist.gov/nistpubs/FIPS/NIST.FIPS.180-4.pdf)

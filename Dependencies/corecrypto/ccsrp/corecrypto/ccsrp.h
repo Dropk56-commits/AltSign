@@ -17,6 +17,10 @@
 #include <corecrypto/ccdh.h>
 #include <corecrypto/ccrng.h>
 
+#define ccsrp_client_process_challenge(A, B, C, D, E, F, G, H) alt_ccsrp_client_process_challenge(A, B, C, D, E, F, G, H)
+#define ccsrp_client_start_authentication(A, B, C) alt_ccsrp_client_start_authentication(A, B, C)
+#define ccsrp_client_verify_session(A, B) alt_ccsrp_client_verify_session(A, B)
+
 CC_PTRCHECK_CAPABLE_HEADER()
 CC_BEGIN_DECLS
 
@@ -360,7 +364,7 @@ bool ccsrp_server_verify_session(ccsrp_ctx_t srp, const void *cc_unsafe_indexabl
  @result 0 if no error
  */
 CC_NONNULL((1, 2, 3))
-int ccsrp_client_start_authentication(ccsrp_ctx_t srp, struct ccrng_state *rng, void *cc_unsafe_indexable A_bytes);
+int alt_ccsrp_client_start_authentication(ccsrp_ctx_t srp, struct ccrng_state *rng, void *cc_unsafe_indexable A_bytes);
 
 /*!
  @function   ccsrp_client_process_challenge
@@ -378,14 +382,14 @@ int ccsrp_client_start_authentication(ccsrp_ctx_t srp, struct ccrng_state *rng, 
  @result 0 if no error
  */
 CC_NONNULL((1, 2, 4, 6, 7, 8))
-int ccsrp_client_process_challenge(ccsrp_ctx_t srp,
-                                   const char *cc_cstring username,
-                                   size_t password_len,
-                                   const void *cc_sized_by(password_len) password,
-                                   size_t salt_len,
-                                   const void *cc_sized_by(salt_len) salt,
-                                   const void *cc_unsafe_indexable B_bytes,
-                                   void *cc_unsafe_indexable M_bytes);
+int alt_ccsrp_client_process_challenge(ccsrp_ctx_t srp,
+                                       const char *cc_cstring username,
+                                       size_t password_len,
+                                       const void *cc_sized_by(password_len) password,
+                                       size_t salt_len,
+                                       const void *cc_sized_by(salt_len) salt,
+                                       const void *cc_unsafe_indexable B_bytes,
+                                       void *cc_unsafe_indexable M_bytes);
 
 /*!
  @function   ccsrp_client_verify_session
@@ -397,7 +401,7 @@ int ccsrp_client_process_challenge(ccsrp_ctx_t srp,
 
  @result true if authenticated, false otherwise (fail or incomplete protocol)
  */
-CC_NONNULL((1, 2)) bool ccsrp_client_verify_session(ccsrp_ctx_t srp, const uint8_t *cc_unsafe_indexable HAMK_bytes);
+CC_NONNULL((1, 2)) bool alt_ccsrp_client_verify_session(ccsrp_ctx_t srp, const uint8_t *cc_unsafe_indexable HAMK_bytes);
 
 CC_NONNULL((1))
 bool ccsrp_client_set_noUsernameInX(ccsrp_ctx_t srp, bool flag);

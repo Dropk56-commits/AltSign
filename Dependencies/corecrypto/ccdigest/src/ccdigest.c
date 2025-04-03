@@ -28,8 +28,8 @@ void ccdigest_internal(const struct ccdigest_info *di, size_t len,
 }
 
 
-void ccdigest(const struct ccdigest_info *di, size_t len,
-              const void *data, void *digest) {
+void alt_ccdigest(const struct ccdigest_info *di, size_t len,
+                  const void *data, void *digest) {
     CC_ENSURE_DIT_ENABLED_WITH_SB
 
     return ccdigest_internal(di, len, data, digest);

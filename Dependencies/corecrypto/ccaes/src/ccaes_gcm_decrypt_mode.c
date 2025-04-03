@@ -15,7 +15,7 @@
 
 static CC_READ_ONLY_LATE(struct ccmode_gcm) gcm_decrypt;
 
-const struct ccmode_gcm *ccaes_gcm_decrypt_mode(void)
+const struct ccmode_gcm *alt_ccaes_gcm_decrypt_mode(void)
 {
     if (!CC_CACHE_DESCRIPTORS || NULL == gcm_decrypt.init) {
 #if CCMODE_GCM_VNG_SPEEDUP

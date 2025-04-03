@@ -15,6 +15,8 @@
 #include <corecrypto/cc.h>
 #include <corecrypto/ccn.h>
 
+#define ccdigest(A, B, C, D) alt_ccdigest(A, B, C, D)
+
 CC_BEGIN_DECLS
 
 /* To malloc a digest context for a given di, use malloc(ccdigest_di_size(di))
@@ -90,8 +92,8 @@ void ccdigest_final(const struct ccdigest_info *di, ccdigest_ctx_t ctx, unsigned
     di->final(di,ctx,digest);
 }
 
-void ccdigest(const struct ccdigest_info *di, size_t len,
-              const void *data, void *digest);
+void alt_ccdigest(const struct ccdigest_info *di, size_t len,
+                  const void *data, void *digest);
 
 #define OID_DEF(_VALUE_)  ((const unsigned char *)_VALUE_)
 

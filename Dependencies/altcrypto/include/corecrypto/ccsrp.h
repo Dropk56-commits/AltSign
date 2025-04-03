@@ -71,6 +71,10 @@
 #include <corecrypto/ccdh.h>
 #include <corecrypto/ccrng.h>
 
+#define ccsrp_client_process_challenge(A, B, C, D, E, F, G, H) alt_ccsrp_client_process_challenge(A, B, C, D, E, F, G, H)
+#define ccsrp_client_start_authentication(A, B, C) alt_ccsrp_client_start_authentication(A, B, C)
+#define ccsrp_client_verify_session(A, B) alt_ccsrp_client_verify_session(A, B)
+
 /* Aliases for DH-style group params for SRP */
 #if CORECRYPTO_USE_TRANSPARENT_UNION
 typedef ccdh_gp ccsrp_gp;
@@ -464,8 +468,8 @@ ccsrp_server_verify_session(ccsrp_ctx_t srp, const void *user_M,
  */
 CC_NONNULL_TU((1)) CC_NONNULL((2,3))
 int
-ccsrp_client_start_authentication(ccsrp_ctx_t srp, struct ccrng_state *rng,
-                                  void *A_bytes);
+alt_ccsrp_client_start_authentication(ccsrp_ctx_t srp, struct ccrng_state *rng,
+                                      void *A_bytes);
 
 /*!
  @function   ccsrp_client_process_challenge
@@ -484,12 +488,12 @@ ccsrp_client_start_authentication(ccsrp_ctx_t srp, struct ccrng_state *rng,
  */
 CC_NONNULL_TU((1)) CC_NONNULL((2,4,6,7,8))
 int
-ccsrp_client_process_challenge(ccsrp_ctx_t srp,
-                               const char *username,
-                               size_t password_len, const void *password,
-                               size_t salt_len, const void *salt,
-                               const void *B_bytes,
-                               void *M_bytes);
+alt_ccsrp_client_process_challenge(ccsrp_ctx_t srp,
+                                   const char *username,
+                                   size_t password_len, const void *password,
+                                   size_t salt_len, const void *salt,
+                                   const void *B_bytes,
+                                   void *M_bytes);
 
 /*!
  @function   ccsrp_client_verify_session
@@ -503,7 +507,7 @@ ccsrp_client_process_challenge(ccsrp_ctx_t srp,
  */
 CC_NONNULL_TU((1)) CC_NONNULL((2))
 bool
-ccsrp_client_verify_session(ccsrp_ctx_t srp, const uint8_t *HAMK_bytes);
+alt_ccsrp_client_verify_session(ccsrp_ctx_t srp, const uint8_t *HAMK_bytes);
 
 CC_NONNULL_TU((1))
 CC_INLINE bool

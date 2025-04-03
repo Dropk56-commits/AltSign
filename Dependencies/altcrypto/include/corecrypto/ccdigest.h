@@ -68,6 +68,8 @@
 #include <corecrypto/cc.h>
 #include <corecrypto/ccn.h>
 
+#define ccdigest(A, B, C, D) alt_ccdigest(A, B, C, D)
+
 /* To malloc a digest context for a given di, use malloc(ccdigest_di_size(di))
    and assign the result to a pointer to a struct ccdigest_ctx. */
 #if CORECRYPTO_USE_TRANSPARENT_UNION
@@ -207,7 +209,7 @@ void ccdigest_final(const struct ccdigest_info *di, ccdigest_ctx_t ctx, unsigned
     di->final(di,ctx,digest);
 }
 
-void ccdigest(const struct ccdigest_info *di, size_t len,
+void alt_ccdigest(const struct ccdigest_info *di, size_t len,
               const void *data, void *digest);
 
 /* test functions */

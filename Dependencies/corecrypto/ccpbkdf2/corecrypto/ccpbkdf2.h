@@ -14,6 +14,8 @@
 
 #include <corecrypto/ccdigest.h>
 
+#define ccpbkdf2_hmac(A, B, C, D, E, F, G, H) alt_ccpbkdf2_hmac(A, B, C, D, E, F, G, H)
+
 CC_BEGIN_DECLS
 
 /*! @function ccpbkdf2_hmac
@@ -36,11 +38,11 @@ SHA-1 is a good hash to use for the core of the HMAC PRF.
     @param dk           buffer for the results of the PBKDF tranformation, must be dkLen big
  
  */
-int ccpbkdf2_hmac(const struct ccdigest_info *di,
-                   size_t passwordLen, const void *password,
-                   size_t saltLen, const void *salt,
-                   size_t iterations,
-                   size_t dkLen, void *dk);
+int alt_ccpbkdf2_hmac(const struct ccdigest_info *di,
+                      size_t passwordLen, const void *password,
+                      size_t saltLen, const void *salt,
+                      size_t iterations,
+                      size_t dkLen, void *dk);
 
 CC_END_DECLS
 

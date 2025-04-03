@@ -116,11 +116,11 @@ int ccpbkdf2_hmac_internal(const struct ccdigest_info *di,
 }
 
 
-int ccpbkdf2_hmac(const struct ccdigest_info *di,
-                   size_t passwordLen, const void *password,
-                   size_t saltLen, const void *salt,
-                   size_t iterations,
-                   size_t dkLen, void *dk)
+int alt_ccpbkdf2_hmac(const struct ccdigest_info *di,
+                      size_t passwordLen, const void *password,
+                      size_t saltLen, const void *salt,
+                      size_t iterations,
+                      size_t dkLen, void *dk)
 {
     CC_ENSURE_DIT_ENABLED_WITH_SB
 

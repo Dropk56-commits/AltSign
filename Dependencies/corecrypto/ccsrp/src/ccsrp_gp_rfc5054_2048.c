@@ -100,7 +100,7 @@ static ccdh_gp_decl_static(2048) _ccsrp_gp_rfc5054_2048 =
     .l = 256,
 };
 
-ccdh_const_gp_t ccsrp_gp_rfc5054_2048(void)
+ccdh_const_gp_t alt_ccsrp_gp_rfc5054_2048(void)
 {
     return (ccdh_const_gp_t)&_ccsrp_gp_rfc5054_2048;
 }

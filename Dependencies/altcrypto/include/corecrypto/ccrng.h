@@ -67,6 +67,8 @@
 
 #include <corecrypto/cc.h>
 
+#define ccrng(A) alt_ccrng(A)
+
 #define CCERR_DEVICE                   -100
 #define CCERR_INTERUPTS                -101
 #define CCERR_CRYPTO_CONFIG            -102
@@ -106,7 +108,7 @@ struct ccrng_state {
  - Prediction break with frequent (asynchronous) reseed
  */
 
-struct ccrng_state *ccrng(int *error);
+struct ccrng_state *alt_ccrng(int *error);
 
 //call this macro with the rng argument set to output of the call to the ccrng() function
 #define ccrng_generate(rng, outlen, out) ((rng)->generate((struct ccrng_state *)(rng), (outlen), (out)))

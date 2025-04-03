@@ -14,6 +14,8 @@
 
 #include <corecrypto/cc.h>
 
+#define ccrng(A) alt_ccrng(A)
+
 CC_BEGIN_DECLS
 
 #define CCRNG_STATE_COMMON \
@@ -51,7 +53,7 @@ struct ccrng_state {
  - Backtracing resistance
  - Prediction break (after reseed)
  */
-struct ccrng_state *ccrng(int *error);
+struct ccrng_state *alt_ccrng(int *error);
 
 /*!
  @function   ccrng_generate

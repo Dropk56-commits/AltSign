@@ -17,7 +17,7 @@
  #error "Must use CC_READ_ONLY_LATE with CC_KERNEL=1"
 #endif
 
-const struct ccmode_cbc *ccaes_cbc_decrypt_mode(void)
+const struct ccmode_cbc *alt_ccaes_cbc_decrypt_mode(void)
 {
 #if CCAES_INTEL_ASM
     return (CC_HAS_AESNI() ? &ccaes_intel_cbc_decrypt_aesni_mode : &ccaes_intel_cbc_decrypt_opt_mode);

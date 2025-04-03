@@ -67,6 +67,8 @@
 
 #include <corecrypto/ccmode.h>
 
+#define ccpad_pkcs7_decrypt(A, B, C, D, E, F) alt_ccpad_pkcs7_decrypt(A, B, C, D, E, F)
+
 // CTS1,2,3 are defined in Addendum to 800-38A,
 // "Cipher Modes of Operation: Three Variants of Ciphertext Stealing for CBC Mode"
 // CTS3 is also known as "CTS" in RFC3962
@@ -97,8 +99,8 @@ size_t ccpad_cts3_encrypt(const struct ccmode_cbc *cbc, cccbc_ctx *ctx, cccbc_iv
 
     To be safe we remove the entire offending block if the pkcs7 padding checks failed.  However we purposely don't report the failure to decode the padding since any use of this error leads to potential security exploits.  So currently there is no way to distinguish between a full block of padding and bad padding.
  */
-size_t ccpad_pkcs7_decrypt(const struct ccmode_cbc *cbc, cccbc_ctx *ctx, cccbc_iv *iv,
-                           size_t nbytes, const void *in, void *out);
+size_t alt_ccpad_pkcs7_decrypt(const struct ccmode_cbc *cbc, cccbc_ctx *ctx, cccbc_iv *iv,
+                               size_t nbytes, const void *in, void *out);
 
 /* Contract is in is nbytes long.  Writes (nbytes / block_size) + 1 times block_size to out.  In other words, out must be nbytes rounded down to the closest multiple of block_size plus block_size bytes. */
 size_t ccpad_pkcs7_encrypt(const struct ccmode_cbc *cbc, cccbc_ctx *ctx, cccbc_iv *iv,

@@ -15,6 +15,11 @@
 #include <corecrypto/cc.h>
 #include <corecrypto/ccdigest.h>
 
+#define cchmac_init(A, B, C, D) alt_cchmac_init(A, B, C, D)
+#define cchmac_update(A, B, C, D) alt_cchmac_update(A, B, C, D)
+#define cchmac_final(A, B, C) alt_cchmac_final(A, B, C)
+#define cchmac(A, B, C, D, E, F) alt_cchmac(A, B, C, D, E, F)
+
 CC_BEGIN_DECLS
 
 /* An hmac_ctx_t is normally allocated as an array of these. */
@@ -55,16 +60,16 @@ typedef struct cchmac_ctx* cchmac_ctx_t;
 #define cchmac_num(_di_, HC)       ccdigest_num(_di_, ((ccdigest_ctx_t)(HC)))
 #define cchmac_nbits(_di_, HC)     ccdigest_nbits(_di_, ((ccdigest_ctx_t)(HC)))
 
-void cchmac_init(const struct ccdigest_info *di, cchmac_ctx_t ctx,
-                 size_t key_len, const void *key);
-void cchmac_update(const struct ccdigest_info *di, cchmac_ctx_t ctx,
-                   size_t data_len, const void *data);
-void cchmac_final(const struct ccdigest_info *di, cchmac_ctx_t ctx,
-                  unsigned char *mac);
+void alt_cchmac_init(const struct ccdigest_info *di, cchmac_ctx_t ctx,
+                     size_t key_len, const void *key);
+void alt_cchmac_update(const struct ccdigest_info *di, cchmac_ctx_t ctx,
+                       size_t data_len, const void *data);
+void alt_cchmac_final(const struct ccdigest_info *di, cchmac_ctx_t ctx,
+                      unsigned char *mac);
 
-void cchmac(const struct ccdigest_info *di, size_t key_len,
-            const void *key, size_t data_len, const void *data,
-            unsigned char *mac);
+void alt_cchmac(const struct ccdigest_info *di, size_t key_len,
+                const void *key, size_t data_len, const void *data,
+                unsigned char *mac);
 
 CC_END_DECLS
 

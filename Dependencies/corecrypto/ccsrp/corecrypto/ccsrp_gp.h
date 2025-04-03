@@ -14,10 +14,12 @@
 
 #include <corecrypto/ccdh.h>
 
+#define ccsrp_gp_rfc5054_2048(void) alt_ccsrp_gp_rfc5054_2048()
+
 CC_BEGIN_DECLS
 
 ccdh_const_gp_t ccsrp_gp_rfc5054_1024(void);
-ccdh_const_gp_t ccsrp_gp_rfc5054_2048(void);
+ccdh_const_gp_t alt_ccsrp_gp_rfc5054_2048(void);
 ccdh_const_gp_t ccsrp_gp_rfc5054_3072(void);
 ccdh_const_gp_t ccsrp_gp_rfc5054_4096(void);
 ccdh_const_gp_t ccsrp_gp_rfc5054_8192(void);

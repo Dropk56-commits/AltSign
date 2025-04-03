@@ -28,9 +28,9 @@ void cchmac_internal(const struct ccdigest_info *di,
     cchmac_di_clear(di, hc);
 }
 
-void cchmac(const struct ccdigest_info *di,
-            size_t key_len, const void *key,
-            size_t data_len, const void *data, unsigned char *mac) {
+void alt_cchmac(const struct ccdigest_info *di,
+                size_t key_len, const void *key,
+                size_t data_len, const void *data, unsigned char *mac) {
     CC_ENSURE_DIT_ENABLED_WITH_SB
 
     return cchmac_internal(di, key_len, key, data_len, data, mac);

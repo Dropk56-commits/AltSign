@@ -14,7 +14,7 @@
 #include "cc_runtime_config.h"
 #include "fipspost_trace.h"
 
-const struct ccdigest_info *ccsha256_di(void)
+const struct ccdigest_info *alt_ccsha256_di(void)
 {
     FIPSPOST_TRACE_EVENT;
 
