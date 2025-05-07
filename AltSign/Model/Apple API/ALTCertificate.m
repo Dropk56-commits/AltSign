@@ -10,11 +10,18 @@
 
 #include <openssl/pem.h>
 #include <openssl/pkcs12.h>
+#include <openssl/provider.h>
 
 NSString *ALTCertificatePEMPrefix = @"-----BEGIN CERTIFICATE-----";
 NSString *ALTCertificatePEMSuffix = @"-----END CERTIFICATE-----";
 
 @implementation ALTCertificate
+
++ (void)load
+{
+    // Load legacy provider module to decrypt .p12 certificates created with OpenSSL 1.x
+    OSSL_PROVIDER_try_load(NULL, "legacy", 1);
+}
 
 - (instancetype)initWithName:(NSString *)name serialNumber:(NSString *)serialNumber data:(nullable NSData *)data
 {
@@ -82,7 +89,7 @@ NSString *ALTCertificatePEMSuffix = @"-----END CERTIFICATE-----";
 
 - (nullable instancetype)initWithP12Data:(NSData *)p12Data password:(nullable NSString *)password
 {
-    BIO *inputP12Buffer = BIO_new_mem_buf((const void *)p12Data.bytes, (int)p12Data.length);    
+    BIO *inputP12Buffer = BIO_new_mem_buf((const void *)p12Data.bytes, (int)p12Data.length);
     PKCS12 *inputP12 = d2i_PKCS12_bio(inputP12Buffer, NULL);
     BIO_free(inputP12Buffer);
     
